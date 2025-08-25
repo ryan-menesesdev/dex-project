@@ -12,7 +12,7 @@
         <attribute name="specialDefense" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="speed" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="sprite" attributeType="URI"/>
-        <attribute name="type" attributeType="Transformable" valueTransformerName="NSUnsecureUnchiveFromData" customClassName="[String]"/>
+        <attribute name="types" attributeType="Transformable" valueTransformerName="NSUnsecureUnchiveFromData" customClassName="[String]"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
