@@ -1,24 +1,30 @@
-//
-//  ContentView.swift
-//  Dex
-//
-//  Created by Ryan Davi Oliveira de Meneses on 22/08/25.
-//
-
 import SwiftUI
 import CoreData
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Pokemon.id, ascending: true)],
+    @FetchRequest<Pokemon>(
+        sortDescriptors: [SortDescriptor(\.id)],
         animation: .default)
-    
-    private var pokedex: FetchedResults<Pokemon>
+    private var pokedex
     private let fetcher = FetchService()
     @State var textTyped = ""
-    @State var favoriteIcon = false
+    @State var filterByFavorites = false
+    
+    private var dynamicPredicate: NSPredicate {
+        var predicates: [NSPredicate] = []
+        
+        if !textTyped.isEmpty {
+            predicates.append(NSPredicate(format: "name contains[c] %@", textTyped))
+        }
+        
+        if filterByFavorites {
+            predicates.append(NSPredicate(format: "favorite == %d", true))
+        }
+        
+        return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+    }
     
     var body: some View {
         NavigationStack {
@@ -35,8 +41,15 @@ struct ContentView: View {
                         .frame(width: 100, height: 90)
                         
                         VStack(alignment: .leading){
-                            Text(pokemon.name!.capitalized)
-                                .fontWeight(.bold)
+                            HStack {
+                                Text(pokemon.name!.capitalized)
+                                    .fontWeight(.bold)
+                                
+                                if pokemon.favorite {
+                                    Image(systemName: "star.fill")
+                                        .foregroundStyle(.yellow)
+                                }
+                            }
                             
                             HStack {
                                 ForEach(pokemon.types!, id: \.self) { type in
@@ -57,13 +70,20 @@ struct ContentView: View {
                 Text(pokemon.name ?? "no")
             })
             .searchable(text: $textTyped, prompt: "Find a Pokemon")
+            .autocorrectionDisabled()
+            .onChange(of: textTyped) {
+                pokedex.nsPredicate = dynamicPredicate
+            }
+            .onChange(of: filterByFavorites) {
+                pokedex.nsPredicate = dynamicPredicate
+            }
             .toolbar {
                 ToolbarItem {
                     Button {
 //                        getPoke()
-                        favoriteIcon.toggle()
+                        filterByFavorites.toggle()
                     } label: {
-                        Image(systemName: favoriteIcon ? "star.fill" : "star")
+                        Image(systemName: filterByFavorites ? "star.fill" : "star")
                             .foregroundStyle(.yellow)
                     }
                 }
@@ -94,6 +114,10 @@ struct ContentView: View {
                     pokemon.sprite = fetchedPokemon.sprite
                     pokemon.shiny = fetchedPokemon.shiny
                     
+                    if pokemon.id % 2 == 0 {
+                        pokemon.favorite = true
+                    }
+                    
                     try viewContext.save()
                 }
             } catch {
@@ -102,45 +126,6 @@ struct ContentView: View {
         }
     }
 }
-
-//    private func addItem() {
-//        withAnimation {
-//            let newPokemon = Pokemon(context: viewContext)
-//            newItem.timestamp = Date()
-//
-//            do {
-//                try viewContext.save()
-//            } catch {
-//                // Replace this implementation with code to handle the error appropriately.
-//                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-//                let nsError = error as NSError
-//                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-//            }
-//        }
-//    }
-
-//    private func deleteItems(offsets: IndexSet) {
-//        withAnimation {
-//            offsets.map { items[$0] }.forEach(viewContext.delete)
-//
-//            do {
-//                try viewContext.save()
-//            } catch {
-//                // Replace this implementation with code to handle the error appropriately.
-//                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-//                let nsError = error as NSError
-//                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-//            }
-//        }
-//    }
-//}
-
-//private let itemFormatter: DateFormatter = {
-//    let formatter = DateFormatter()
-//    formatter.dateStyle = .short
-//    formatter.timeStyle = .medium
-//    return formatter
-//}()
 
 #Preview {
     ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)

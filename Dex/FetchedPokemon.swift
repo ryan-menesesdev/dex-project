@@ -1,10 +1,3 @@
-//
-//  FetchedPokemon.swift
-//  Dex
-//
-//  Created by Ryan Davi Oliveira de Meneses on 25/08/25.
-//
-
 import Foundation
 
 struct FetchedPokemon: Decodable {

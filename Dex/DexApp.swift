@@ -1,10 +1,3 @@
-//
-//  DexApp.swift
-//  Dex
-//
-//  Created by Ryan Davi Oliveira de Meneses on 22/08/25.
-//
-
 import SwiftUI
 
 @main
