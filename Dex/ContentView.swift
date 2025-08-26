@@ -4,10 +4,11 @@ import CoreData
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
-    @FetchRequest<Pokemon>(
-        sortDescriptors: [SortDescriptor(\.id)],
-        animation: .default)
+    @FetchRequest<Pokemon>(sortDescriptors: []) private var allPokemon
+    
+    @FetchRequest<Pokemon>(sortDescriptors: [SortDescriptor(\.id)], animation: .default)
     private var pokedex
+    
     private let fetcher = FetchService()
     @State var textTyped = ""
     @State var filterByFavorites = false
@@ -27,7 +28,7 @@ struct ContentView: View {
     }
     
     var body: some View {
-        if pokedex.isEmpty {
+        if allPokemon.isEmpty {
             ContentUnavailableView {
                 Label("No Pokemon", image:.nopokemon)
             } description: {
@@ -77,9 +78,19 @@ struct ContentView: View {
                                     }
                                 }
                             }
+                            .swipeActions(edge: .leading) {
+                                Button(pokemon.favorite ? "Remove from favorites" : "Add to Favorites", systemImage: "star") {
+                                    pokemon.favorite.toggle()
+                                    do {
+                                        try viewContext.save()
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
+                            }
                         }
                     } footer: {
-                        if pokedex.count < 151 {
+                        if allPokemon.count < 151 {
                             ContentUnavailableView {
                                 Label("Missing Pokemon", image: .nopokemon)
                             } description: {
@@ -95,7 +106,8 @@ struct ContentView: View {
                     }
                 }
                 .navigationDestination(for: Pokemon.self, destination: { pokemon in
-                    Text(pokemon.name ?? "no")
+                    PokemonDetail()
+                        .environmentObject(pokemon)
                 })
                 .searchable(text: $textTyped, prompt: "Find a Pokemon")
                 .autocorrectionDisabled()
