@@ -12,30 +12,66 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Pokemon.id, ascending:   true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Pokemon.id, ascending: true)],
         animation: .default)
     
     private var pokedex: FetchedResults<Pokemon>
     private let fetcher = FetchService()
+    @State var textTyped = ""
+    @State var favoriteIcon = false
     
     var body: some View {
         NavigationStack {
             List {
                 ForEach(pokedex) { pokemon in
-                    NavigationLink {
-                        Text(pokemon.name ?? "no")
-                    } label: {
-                        Text(pokemon.name ?? "no")
+                    NavigationLink(value: pokemon) {
+                        AsyncImage(url: pokemon.sprite) { image in
+                            image
+                                .resizable()
+                                .scaledToFit()
+                        } placeholder: {
+                            ProgressView()
+                        }
+                        .frame(width: 100, height: 90)
+                        
+                        VStack(alignment: .leading){
+                            Text(pokemon.name!.capitalized)
+                                .fontWeight(.bold)
+                            
+                            HStack {
+                                ForEach(pokemon.types!, id: \.self) { type in
+                                    Text(type.capitalized)
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(Color(type.capitalized))
+                                        .clipShape(.capsule)
+                                }
+                            }
+                        }
                     }
                 }
             }
+            .navigationDestination(for: Pokemon.self, destination: { pokemon in
+                Text(pokemon.name ?? "no")
+            })
+            .searchable(text: $textTyped, prompt: "Find a Pokemon")
             .toolbar {
                 ToolbarItem {
-                    Button("Add Item", systemImage: "plus") {
-                        getPoke()
+                    Button {
+//                        getPoke()
+                        favoriteIcon.toggle()
+                    } label: {
+                        Image(systemName: favoriteIcon ? "star.fill" : "star")
+                            .foregroundStyle(.yellow)
                     }
                 }
             }
+            .navigationTitle("Pokedex")
+        }
+        .onAppear {
+            getPoke()
         }
     }
     
