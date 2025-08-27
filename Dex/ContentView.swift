@@ -4,7 +4,8 @@ import CoreData
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
-    @FetchRequest<Pokemon>(sortDescriptors: []) private var allPokemon
+    @FetchRequest<Pokemon>(sortDescriptors: [])
+    private var allPokemon
     
     @FetchRequest<Pokemon>(sortDescriptors: [SortDescriptor(\.id)], animation: .default)
     private var pokedex
@@ -45,14 +46,22 @@ struct ContentView: View {
                     Section {
                         ForEach(pokedex) { pokemon in
                             NavigationLink(value: pokemon) {
-                                AsyncImage(url: pokemon.sprite) { image in
-                                    image
+                                
+                                if pokemon.sprite == nil {
+                                    AsyncImage(url: pokemon.spriteURL) { image in
+                                        image
+                                            .resizable()
+                                            .scaledToFit()
+                                    } placeholder: {
+                                        ProgressView()
+                                    }
+                                    .frame(width: 100, height: 90)
+                                } else {
+                                    pokemon.spriteImage
                                         .resizable()
                                         .scaledToFit()
-                                } placeholder: {
-                                    ProgressView()
+                                        .frame(width: 100, height: 90)
                                 }
-                                .frame(width: 100, height: 90)
                                 
                                 VStack(alignment: .leading){
                                     HStack {
@@ -106,7 +115,7 @@ struct ContentView: View {
                     }
                 }
                 .navigationDestination(for: Pokemon.self, destination: { pokemon in
-                    PokemonDetail()
+                    PokemonDetailView()
                         .environmentObject(pokemon)
                 })
                 .searchable(text: $textTyped, prompt: "Find a Pokemon")
@@ -148,13 +157,32 @@ struct ContentView: View {
                     pokemon.specialAttack = fetchedPokemon.specialAttack
                     pokemon.specialDefense = fetchedPokemon.specialDefense
                     pokemon.speed = fetchedPokemon.speed
-                    pokemon.sprite = fetchedPokemon.sprite
-                    pokemon.shiny = fetchedPokemon.shiny
+                    pokemon.spriteURL = fetchedPokemon.spriteURL
+                    pokemon.shinyURL = fetchedPokemon.shinyURL
                     
                     try viewContext.save()
                 }
             } catch {
                     print(error)
+            }
+            storePoke()
+        }
+    }
+    
+    private func storePoke() {
+        Task {
+            do {
+                for pokemon in allPokemon {
+                    pokemon.sprite = try await URLSession.shared.data(from: pokemon.spriteURL!).0
+                    
+                    pokemon.shiny = try await URLSession.shared.data(from: pokemon.shinyURL!).0
+                    
+                    try viewContext.save()
+                    
+                    print("Sprites stored: id: \(pokemon.id), name: \(pokemon.name!.capitalized)")
+                }
+            } catch {
+                print(error)
             }
         }
     }

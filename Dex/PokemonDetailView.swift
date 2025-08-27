@@ -1,13 +1,6 @@
-//
-//  PokemonDetail.swift
-//  Dex
-//
-//  Created by Ryan Davi Oliveira de Meneses on 26/08/25.
-//
-
 import SwiftUI
 
-struct PokemonDetail: View {
+struct PokemonDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var pokemon: Pokemon
     @State private var showShiny = false
@@ -20,14 +13,22 @@ struct PokemonDetail: View {
                     .scaledToFit()
                     .shadow(color: .black, radius: 6)
                 
-                AsyncImage(url: showShiny ? pokemon.shiny : pokemon.sprite) { pokemon in
-                    pokemon
+                if pokemon.sprite == nil || pokemon.shiny == nil {
+                    AsyncImage(url: showShiny ? pokemon.shinyURL : pokemon.spriteURL) { pokemon in
+                        pokemon
+                            .interpolation(.none)
+                            .resizable()
+                            .scaledToFit()
+                            .shadow(color: .black, radius: 6)
+                    } placeholder: {
+                        ProgressView()
+                    }
+                } else {
+                    (showShiny ? pokemon.shinyImage : pokemon.spriteImage)
                         .interpolation(.none)
                         .resizable()
                         .scaledToFit()
                         .shadow(color: .black, radius: 6)
-                } placeholder: {
-                    ProgressView()
                 }
             }
             
@@ -64,26 +65,30 @@ struct PokemonDetail: View {
             
             VStack {
                 Text("Stats")
-                    .font(.largeTitle)
+                    .font(.title)
                     .foregroundStyle(.black)
+                
+                PokemonStatsView(pokemon: pokemon)
             }
         }
         .navigationTitle(pokemon.name!.capitalized)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Show shiny color", systemImage:"slider.horizontal.3") {
+                Button {
                     showShiny.toggle()
+                } label: {
+                    Image(systemName: showShiny ? "wand.and.stars" : "wand.and.stars.inverse")
+                        .tint(showShiny ? .yellow : .primary)
+                        .font(.title2)
                 }
             }
-                
-            
         }
     }
 }
 
 #Preview {
     NavigationStack {
-        PokemonDetail()
+        PokemonDetailView()
             .environmentObject(PersistenceController.previewSample)
     }
 }
