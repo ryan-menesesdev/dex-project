@@ -6,19 +6,92 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F37B4BF62E5F662E005E9DF0 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F37B4BF52E5F662E005E9DF0 /* WidgetKit.framework */; };
+		F37B4BF82E5F662E005E9DF0 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F37B4BF72E5F662E005E9DF0 /* SwiftUI.framework */; };
+		F37B4C032E5F6632005E9DF0 /* DexWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F37B4BF32E5F662E005E9DF0 /* DexWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F37B4C012E5F6632005E9DF0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3FF625D2E589EDA00A319AC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F37B4BF22E5F662E005E9DF0;
+			remoteInfo = DexWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F37B4C042E5F6632005E9DF0 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				F37B4C032E5F6632005E9DF0 /* DexWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		F37B4BF32E5F662E005E9DF0 /* DexWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DexWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F37B4BF52E5F662E005E9DF0 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		F37B4BF72E5F662E005E9DF0 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		F3FF62652E589EDA00A319AC /* Dex.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dex.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F37B4C072E5F6633005E9DF0 /* Exceptions for "DexWidget" folder in "DexWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F37B4BF22E5F662E005E9DF0 /* DexWidgetExtension */;
+		};
+		F37B4C0A2E5F68DE005E9DF0 /* Exceptions for "Dex" folder in "DexWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+				Dex.xcdatamodeld,
+				Persistence.swift,
+				PokemonExtension.swift,
+			);
+			target = F37B4BF22E5F662E005E9DF0 /* DexWidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		F37B4BF92E5F662E005E9DF0 /* DexWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F37B4C072E5F6633005E9DF0 /* Exceptions for "DexWidget" folder in "DexWidgetExtension" target */,
+			);
+			path = DexWidget;
+			sourceTree = "<group>";
+		};
 		F3FF62672E589EDA00A319AC /* Dex */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F37B4C0A2E5F68DE005E9DF0 /* Exceptions for "Dex" folder in "DexWidgetExtension" target */,
+			);
 			path = Dex;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		F37B4BF02E5F662E005E9DF0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F37B4BF82E5F662E005E9DF0 /* SwiftUI.framework in Frameworks */,
+				F37B4BF62E5F662E005E9DF0 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3FF62622E589EDA00A319AC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -29,10 +102,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F37B4BF42E5F662E005E9DF0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F37B4BF52E5F662E005E9DF0 /* WidgetKit.framework */,
+				F37B4BF72E5F662E005E9DF0 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		F3FF625C2E589EDA00A319AC = {
 			isa = PBXGroup;
 			children = (
 				F3FF62672E589EDA00A319AC /* Dex */,
+				F37B4BF92E5F662E005E9DF0 /* DexWidget */,
+				F37B4BF42E5F662E005E9DF0 /* Frameworks */,
 				F3FF62662E589EDA00A319AC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				F3FF62652E589EDA00A319AC /* Dex.app */,
+				F37B4BF32E5F662E005E9DF0 /* DexWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +133,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		F37B4BF22E5F662E005E9DF0 /* DexWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F37B4C082E5F6633005E9DF0 /* Build configuration list for PBXNativeTarget "DexWidgetExtension" */;
+			buildPhases = (
+				F37B4BEF2E5F662E005E9DF0 /* Sources */,
+				F37B4BF02E5F662E005E9DF0 /* Frameworks */,
+				F37B4BF12E5F662E005E9DF0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F37B4BF92E5F662E005E9DF0 /* DexWidget */,
+			);
+			name = DexWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = DexWidgetExtension;
+			productReference = F37B4BF32E5F662E005E9DF0 /* DexWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		F3FF62642E589EDA00A319AC /* Dex */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F3FF62752E589EDE00A319AC /* Build configuration list for PBXNativeTarget "Dex" */;
@@ -55,10 +162,12 @@
 				F3FF62612E589EDA00A319AC /* Sources */,
 				F3FF62622E589EDA00A319AC /* Frameworks */,
 				F3FF62632E589EDA00A319AC /* Resources */,
+				F37B4C042E5F6632005E9DF0 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F37B4C022E5F6632005E9DF0 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				F3FF62672E589EDA00A319AC /* Dex */,
@@ -80,6 +189,9 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
+					F37B4BF22E5F662E005E9DF0 = {
+						CreatedOnToolsVersion = 16.4;
+					};
 					F3FF62642E589EDA00A319AC = {
 						CreatedOnToolsVersion = 16.4;
 					};
@@ -100,11 +212,19 @@
 			projectRoot = "";
 			targets = (
 				F3FF62642E589EDA00A319AC /* Dex */,
+				F37B4BF22E5F662E005E9DF0 /* DexWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		F37B4BF12E5F662E005E9DF0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3FF62632E589EDA00A319AC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +235,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		F37B4BEF2E5F662E005E9DF0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3FF62612E589EDA00A319AC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,7 +251,71 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		F37B4C022E5F6632005E9DF0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F37B4BF22E5F662E005E9DF0 /* DexWidgetExtension */;
+			targetProxy = F37B4C012E5F6632005E9DF0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		F37B4C052E5F6632005E9DF0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = DexWidget/DexWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q973G45C7S;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DexWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DexWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ryan.Dex.DexWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F37B4C062E5F6632005E9DF0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = DexWidget/DexWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q973G45C7S;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DexWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DexWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ryan.Dex.DexWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		F3FF62732E589EDE00A319AC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -251,6 +442,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Dex/Dex.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Q973G45C7S;
@@ -279,6 +471,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Dex/Dex.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Q973G45C7S;
@@ -305,6 +498,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		F37B4C082E5F6633005E9DF0 /* Build configuration list for PBXNativeTarget "DexWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F37B4C052E5F6632005E9DF0 /* Debug */,
+				F37B4C062E5F6632005E9DF0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		F3FF62602E589EDA00A319AC /* Build configuration list for PBXProject "Dex" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
