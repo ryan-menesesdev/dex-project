@@ -1,21 +1,20 @@
 import WidgetKit
 import SwiftUI
+import SwiftData
 
 struct Provider: TimelineProvider {
-    var randomPokemon: Pokemon {
-        var results: [Pokemon] = []
+    var sharedModelContainer: ModelContainer {
+        let schema = Schema( [
+            Pokemon.self
+        ])
+        
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         
         do {
-            results = try PersistenceController.shared.container.viewContext.fetch(Pokemon.fetchRequest())
+            return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
-            print("Error trying to fetch: \(error)")
+            fatalError("Could not create Model Container: \(error)")
         }
-        
-        if let randomPokemon = results.randomElement() {
-            return randomPokemon
-        }
-        
-        return PersistenceController.previewSample
     }
     
     func placeholder(in context: Context) -> SimpleEntry {
@@ -28,25 +27,34 @@ struct Provider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        var entries: [SimpleEntry] = []
-
-        let currentDate = Date()
-        for hourOffset in 0 ..< 10 {
-            let entryDate = Calendar.current.date(byAdding: .second, value: hourOffset * 5, to: currentDate)!
-            let entryPokemon = randomPokemon
+        Task { @MainActor in
+            var entries: [SimpleEntry] = []
             
-            let entry = SimpleEntry(
-                date: entryDate,
-                name: entryPokemon.name!,
-                types: entryPokemon.types!,
-                sprite: entryPokemon.spriteImage)
+            let currentDate = Date()
             
-            entries.append(entry)
+            if let results = try? sharedModelContainer.mainContext.fetch(FetchDescriptor<Pokemon>()) {
+                for hourOffset in 0 ..< 10 {
+                    let entryDate = Calendar.current.date(byAdding: .second, value: hourOffset * 5, to: currentDate)!
+                    let entryPokemon = results.randomElement()!
+                    
+                    let entry = SimpleEntry(
+                        date: entryDate,
+                        name: entryPokemon.name,
+                        types: entryPokemon.types,
+                        sprite: entryPokemon.spriteImage)
+                    
+                    entries.append(entry)
+                }
+                
+                let timeline = Timeline(entries: entries, policy: .atEnd)
+                completion(timeline)
+            } else {
+                let timeline = Timeline(entries: [SimpleEntry.placeholder, SimpleEntry.placeholder2], policy: .atEnd)
+                completion(timeline)
+            }
         }
-
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        completion(timeline)
     }
+        
 }
 
 struct SimpleEntry: TimelineEntry {

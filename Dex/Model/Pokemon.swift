@@ -1,18 +1,10 @@
-//
-//  Pokemon.swift
-//  Dex
-//
-//  Created by Ryan Davi Oliveira de Meneses on 28/08/25.
-//
-//
-
 import Foundation
 import SwiftData
 import SwiftUI
 
 @Model public class Pokemon: Decodable {
 
-    @Attribute(.unique) var id: Int
+    @Attribute(.unique) public var id: Int
     var name: String
     var types: [String]
     var hp: Int
@@ -54,7 +46,7 @@ import SwiftUI
     
     public required init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.id = try container.decode(Int16.self, forKey: .id)
+        self.id = try container.decode(Int.self, forKey: .id)
         self.name = try container.decode(String.self, forKey: .name)
         
         var decodedTypes = [String]()
@@ -73,11 +65,11 @@ import SwiftUI
         
         self.types = decodedTypes
         
-        var decodedStats = [Int16]()
+        var decodedStats = [Int]()
         var statsContainer = try container.nestedUnkeyedContainer(forKey: .stats)
         while !statsContainer.isAtEnd {
             let statsDictionaryContainer = try statsContainer.nestedContainer(keyedBy: CodingKeys.StatDictionaryKeys.self)
-            let stat = try statsDictionaryContainer.decode(Int16.self, forKey: .baseStat)
+            let stat = try statsDictionaryContainer.decode(Int.self, forKey: .baseStat)
             
             decodedStats.append(stat)
         }
