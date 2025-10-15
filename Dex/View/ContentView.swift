@@ -6,9 +6,11 @@ struct ContentView: View {
     
     @Query(sort: \Pokemon.id, animation: .default) private var pokedex: [Pokemon]
     
-    private let fetcher = FetchService()
     @State var textTyped = ""
     @State var filterByFavorites = false
+    @State private var viewError: ViewError?
+    
+    private let fetcher = FetchService()
     
     private var dynamicPredicate: Predicate<Pokemon> {
         #Predicate<Pokemon> { pokemon in
@@ -25,113 +27,61 @@ struct ContentView: View {
     }
     
     var body: some View {
-        if pokedex.isEmpty {
-            ContentUnavailableView {
-                Label("No Pokemon", image:.nopokemon)
-            } description: {
-                Text("There aren't any Pokemon yet.\nFetch some Pokemon to get started!")
-            } actions: {
-                Button("Fetch Pokemon", systemImage: "antenna.radiowaves.left.and.right") {
-                    getPoke(from: 1)
-                }
-                .buttonStyle(.borderedProminent)
-            }
-        } else {
-            NavigationStack {
-                List {
-                    Section {
-                        ForEach((try? pokedex.filter(dynamicPredicate)) ?? pokedex) { pokemon in
-                            NavigationLink(value: pokemon) {
-                                
-                                if pokemon.sprite == nil {
-                                    AsyncImage(url: pokemon.spriteURL) { image in
-                                        image
-                                            .resizable()
-                                            .scaledToFit()
-                                    } placeholder: {
-                                        ProgressView()
-                                    }
-                                    .frame(width: 100, height: 90)
-                                } else {
-                                    pokemon.spriteImage
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 100, height: 90)
-                                }
-                                
-                                VStack(alignment: .leading){
-                                    HStack {
-                                        Text(pokemon.name.capitalized)
-                                            .fontWeight(.bold)
-                                        
-                                        if pokemon.favorite {
-                                            Image(systemName: "star.fill")
-                                                .foregroundStyle(.yellow)
-                                        }
-                                    }
-                                    
-                                    HStack {
-                                        ForEach(pokemon.types, id: \.self) { type in
-                                            Text(type.capitalized)
-                                                .font(.subheadline)
-                                                .fontWeight(.semibold)
-                                                .padding(.horizontal, 8)
-                                                .padding(.vertical, 4)
-                                                .background(Color(type.capitalized))
-                                                .clipShape(.capsule)
+        Group {
+            if pokedex.isEmpty {
+                FetchPokemonView(getPoke: getPoke)
+            } else {
+                NavigationStack {
+                    List {
+                        Section {
+                            ForEach((try? pokedex.filter(dynamicPredicate)) ?? pokedex) { pokemon in
+                                PokemonListItem(pokemon: pokemon)
+                                .swipeActions(edge: .leading) {
+                                    Button(pokemon.favorite ? "Remove from favorites" : "Add to Favorites", systemImage: "star") {
+                                        pokemon.favorite.toggle()
+                                        do {
+                                            try modelContext.save()
+                                        } catch {
+                                            pokemon.favorite.toggle()
+                                            print(error)
+                                            viewError = .context(.saveFailed)
                                         }
                                     }
                                 }
                             }
-                            .swipeActions(edge: .leading) {
-                                Button(pokemon.favorite ? "Remove from favorites" : "Add to Favorites", systemImage: "star") {
-                                    pokemon.favorite.toggle()
-                                    do {
-                                        try modelContext.save()
-                                    } catch {
-                                        print(error)
-                                    }
-                                }
-                            }
-                        }
-                    } footer: {
-                        if pokedex.count < 151 {
-                            ContentUnavailableView {
-                                Label("Missing Pokemon", image: .nopokemon)
-                            } description: {
-                                Text("The fetch was interrupted!\nFetch the rest of the Pokemon")
-                            } actions: {
-                                Button("Fetch Pokemon", systemImage: "antenna.radiowaves.left.and.right") {
-                                    getPoke(from: pokedex.count + 1)
-                                }
-                                .buttonStyle(.borderedProminent)
-                            }
-
+                        } footer: {
+                            InterruptedFetchPokemonView(getPoke: getPoke, pokedexCount: pokedex.count)
                         }
                     }
-                }
-                .navigationDestination(for: Pokemon.self, destination: { pokemon in
-                    PokemonDetailView(pokemon: pokemon)
-                })
-                .searchable(text: $textTyped, prompt: "Find a Pokemon")
-                .autocorrectionDisabled()
-                .animation(.default, value: textTyped)
-                .toolbar {
-                    ToolbarItem {
-                        Button {
-                            withAnimation {
-                                filterByFavorites.toggle()
+                    .navigationDestination(for: Pokemon.self, destination: { pokemon in
+                        PokemonDetailView(pokemon: pokemon)
+                    })
+                    .searchable(text: $textTyped, prompt: "Find a Pokemon")
+                    .autocorrectionDisabled()
+                    .animation(.default, value: textTyped)
+                    .toolbar {
+                        ToolbarItem {
+                            Button {
+                                withAnimation {
+                                    filterByFavorites.toggle()
+                                }
+                            } label: {
+                                Image(systemName: filterByFavorites ? "star.fill" : "star")
+                                    .foregroundStyle(.yellow)
                             }
-                        } label: {
-                            Image(systemName: filterByFavorites ? "star.fill" : "star")
-                                .foregroundStyle(.yellow)
                         }
                     }
+                    .navigationTitle("Pokedex")
                 }
-                .navigationTitle("Pokedex")
             }
         }
+        .alert("Error", isPresented: .constant(viewError != nil), presenting: viewError) { error in
+            Button("Ok") { viewError = nil }
+        } message: { error in
+            Text(error.message)
+        }
     }
+    
     
     private func getPoke(from id: Int) {
         Task {
@@ -140,10 +90,16 @@ struct ContentView: View {
                     let fetchedPokemon = try await fetcher.fetchPokemon(id)
                     modelContext.insert(fetchedPokemon)
                 }
+                
+                storePoke()
+                
+            } catch let fetchError as FetchError {
+                print(fetchError)
+                viewError = .fetch(fetchError)
             } catch {
-                    print(error)
+                print(error)
+                viewError = .context(.insertFailed)
             }
-            storePoke()
         }
     }
     
@@ -161,6 +117,7 @@ struct ContentView: View {
                 }
             } catch {
                 print(error)
+                viewError = .context(.spriteSaveFailed)
             }
         }
     }

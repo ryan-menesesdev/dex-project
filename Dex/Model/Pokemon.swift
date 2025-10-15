@@ -141,11 +141,10 @@ import SwiftUI
     var highestValue: Stat {
         stats.max { $0.value < $1.value }!
     }
-    
-    struct Stat: Identifiable {
-        let id: Int
-        let name: String
-        let value: Int
-    }
-    
+}
+
+struct Stat: Identifiable {
+    let id: Int
+    let name: String
+    let value: Int
 }

@@ -4,11 +4,14 @@ import SwiftData
 
 struct Provider: TimelineProvider {
     var sharedModelContainer: ModelContainer {
-        let schema = Schema( [
+        let schema = Schema([
             Pokemon.self
         ])
-        
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let modelConfiguration = ModelConfiguration(
+            "DexWidget",
+            schema: schema,
+            url: URL.storeURL(for: "group.ryan.DexGroup", databaseName: "Dex")
+        )
         
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
@@ -32,7 +35,9 @@ struct Provider: TimelineProvider {
             
             let currentDate = Date()
             
-            if let results = try? sharedModelContainer.mainContext.fetch(FetchDescriptor<Pokemon>()) {
+            let descriptor = FetchDescriptor<Pokemon>()
+            
+            if let results = try? sharedModelContainer.mainContext.fetch(descriptor), !results.isEmpty {
                 for hourOffset in 0 ..< 10 {
                     let entryDate = Calendar.current.date(byAdding: .second, value: hourOffset * 5, to: currentDate)!
                     let entryPokemon = results.randomElement()!
@@ -55,6 +60,16 @@ struct Provider: TimelineProvider {
         }
     }
         
+}
+
+extension URL {
+    static func storeURL(for appGroup: String, databaseName: String) -> URL {
+        guard let fileContainer = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup) else {
+            fatalError("Shared file container could not be created.")
+        }
+        
+        return fileContainer.appendingPathComponent("\(databaseName).sqlite")
+    }
 }
 
 struct SimpleEntry: TimelineEntry {
