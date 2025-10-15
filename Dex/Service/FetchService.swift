@@ -2,14 +2,13 @@ import Foundation
 
 @MainActor
 struct FetchService {
-    
-    enum FetchError: Error {
-        case badResponse
-    }
-    
-    private let baseUrl = URL(string:"https://pokeapi.co/api/v2/pokemon")!
+    private let urlString = "https://pokeapi.co/api/v2/pokemon"
     
     func fetchPokemon(_ id: Int) async throws -> Pokemon {
+        guard let baseUrl = URL(string: urlString) else {
+            throw FetchError.badURL
+        }
+        
         let fetchUrl = baseUrl.appending(path: String(id))
         
         let decoder = JSONDecoder()
@@ -21,10 +20,12 @@ struct FetchService {
             throw FetchError.badResponse
         }
         
-        let pokemon = try decoder.decode(Pokemon.self, from: data)
-        
-        print("Pokemon id: \(pokemon.id), name: \(pokemon.name)")
-        
-        return pokemon
+        do {
+            let pokemon = try decoder.decode(Pokemon.self, from: data)
+            print("Pokemon id: \(pokemon.id), name: \(pokemon.name)")
+            return pokemon
+        } catch {
+            throw FetchError.decodingError
+        }
     }
 }
